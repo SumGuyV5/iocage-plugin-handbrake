@@ -39,29 +39,29 @@ start_cmd="daemon -u ${websockify_user} -P ${pidfile} -f ${command}"
 start_precmd="websockify_prestart"
 
 websockify_prestart() {
-        if [ -f ${pidfile} ]; then
-                rm -f ${pidfile}
-                echo "Removing stale pidfile."
-        elif [ ! -d ${pidfile%/*} ]; then
+	if [ -f ${pidfile} ]; then
+		rm -f ${pidfile}
+		echo "Removing stale pidfile."
+	elif [ ! -d ${pidfile%/*} ]; then
 		echo "install."
-                install -d -o ${websockify_user} ${pidfile%/*}
-        fi
+		install -d -o ${websockify_user} ${pidfile%/*}
+	fi
 }
 
 websockify_stop() {
-        if [ -e "${pidfile}" ]; then
-                kill -s TERM `cat ${pidfile}`
-        else
-                echo "${name} is not running"
-        fi
+	if [ -e "${pidfile}" ]; then
+		kill -s TERM `cat ${pidfile}`
+	else
+		echo "${name} is not running"
+	fi
 }
 
 websockify_status() {
-        if [ -e "${pidfile}" ]; then
-                echo "${name} is running as pid `cat ${pidfile}`"
-        else
-                echo "${name} is not running"
-        fi
+	if [ -e "${pidfile}" ]; then
+		echo "${name} is running as pid `cat ${pidfile}`"
+	else
+		echo "${name} is not running"
+	fi
 }
 
 run_rc_command "$1"

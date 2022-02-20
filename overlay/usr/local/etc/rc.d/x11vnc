@@ -14,18 +14,18 @@
 # PROVIDE: x11vnc
 # REQUIRE: NETWORKING SERVERS DAEMON ldconfig resolv
 #
- 
+
 . /etc/rc.subr
- 
+
 name=x11vnc
 rcvar=x11vnc_enable
- 
+
 load_rc_config $name
- 
+
 start_cmd="x11vnc_start"
 stop_cmd="x11vnc_stop"
 restart_cmd="x11vnc_restart"
- 
+
 : ${x11vnc_user="vncserver"}
 : ${x11vnc_enable="NO"}
 : ${x11vnc_display="0"}
@@ -33,10 +33,7 @@ restart_cmd="x11vnc_restart"
 : ${x11vnc_geometry="1280x800"}
 
 DAEMON=/usr/local/bin/${name}
-#XAUTH_FILE="/var/lib/lightdm/.Xauthority"
 GEOM=${x11vnc_geometry}x${x11vnc_depth}
-#DAEMON_ARGS="-create -env FD_PROG=/root/run_hb.sh -nopw -listen 127.0.0.1 -forever -rfbport 5900"
-#DAEMON_ARGS="-create -env FD_PROG=openbox-session -nopw -listen 127.0.0.1 -forever -rfbport 5900"
 DAEMON_ARGS="-display :${x11vnc_display} -nopw -listen 127.0.0.1 -forever -rfbport 5900"
 
 x11vnc_start()
@@ -53,7 +50,7 @@ x11vnc_start()
 	export DISPLAY=:${x11vnc_display}
 	export FD_PROG=/usr/local/bin/openbox-session
 	/usr/local/bin/Xvfb :${x11vnc_display} -screen 0 ${GEOM} &
-	
+
 	#nohup $DAEMON $DAEMON_ARGS &
 	nohup $DAEMON $DAEMON_ARGS >/dev/null 2>&1 &
 	#$DAEMON -R /run/run_hb.sh -display :${x11vnc_display}
@@ -61,13 +58,10 @@ x11vnc_start()
 	/usr/local/bin/ghb --config /root/config --display :${x11vnc_display} &
 
 	return 0
-
-        #CMD="$VNCSERVER "
-        #su -l ${x11vnc_user} -c "${CMD}"
 }
- 
+
 x11vnc_stop()
-{	
+{
 	$DAEMON -R stop -display :${x11vnc_display}
 	killall -9 x11vnc
 	killall -9 Xvfb
@@ -76,8 +70,6 @@ x11vnc_stop()
 		rm -R /tmp/.X${x11vnc_display}-lock
 	fi
 	return 0
-        #CMD="$VNCSERVER -kill :1"
-        #su -l ${x11vnc_user} -c "${CMD}"
 }
 
 x11vnc_restart()
@@ -85,5 +77,5 @@ x11vnc_restart()
 	x11vnc_stop
 	x11vnc_start
 }
- 
+
 run_rc_command "$1"
